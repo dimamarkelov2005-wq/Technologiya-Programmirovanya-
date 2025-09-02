@@ -1,0 +1,28 @@
+a = 10
+b = 5
+subtraction = a - b
+print(subtraction)
+a = 15
+b = 5
+sum = a + b 
+print(sum)
+a = 2
+b = 100
+multiplication = a * b
+print(multiplication)
+a = 5
+b = 2
+exponentiation = a ** b
+print(exponentiation)
+a = 20
+b = 10
+division = a / b
+print(division)
+a = 20
+b = 10
+integer_division = a // b
+print(integer_division)
+a = 5
+b = 2
+division_remainder = a % b
+print(division_remainder)

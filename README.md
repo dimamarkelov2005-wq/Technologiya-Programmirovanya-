@@ -1,1 +1,0 @@
-# Technologiya-Programmirovanya-
