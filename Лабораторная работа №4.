@@ -1,1 +1,8 @@
+n = int(input("Введите число: "))
+a = 1
+while a <= n:
+    print(a)
+    a += 1
 
+for i in range(20, 10, -2):
+  print(i)
