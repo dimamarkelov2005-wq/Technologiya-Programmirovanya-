@@ -1,0 +1,21 @@
+students_heights = [
+    [160, 165, 170, 175, 180],
+    [155, 160, 185, 195, 170],
+    [160, 175, 180, 155, 150],
+    [155, 165, 160, 170, 195]
+]
+
+
+sum_of_rows = [sum(row) for row in students_heights]
+
+
+max_height = max(max(row) for row in students_heights)
+
+
+max_count = sum(row.count(max_height) for row in students_heights)
+
+print("Сумма каждой строки:")
+print(sum_of_rows)
+
+print(f"Самый высокий рост: {max_height}")
+print(f"Количество учеников с таким ростом: {max_count}")
