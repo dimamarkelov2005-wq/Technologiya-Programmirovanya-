@@ -1,0 +1,12 @@
+{% extends 'main/layout.html' %}
+{% block content %}
+<div class="form-container">
+    <h1>Добавить запись</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-save">✅ Добавить</button>
+        <a href="{% url 'news' %}" class="btn-cancel">Отмена</a>
+    </form>
+</div>
+{% endblock %}

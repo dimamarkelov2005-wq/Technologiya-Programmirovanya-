@@ -1,0 +1,23 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Главная | Weather{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h1>Главная страница</h1>
+
+    {% if news %}
+        {% for item in news %}
+        <div class="news-card">
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.full_text|truncatechars:200 }}</p>
+            <small>Дата: {{ item.created_at|date:"d.m.Y H:i" }}</small>
+            <br>
+            <a href="/news/">Читать далее →</a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>Пока нет новостей 😢</p>
+    {% endif %}
+</div>
+{% endblock %}
