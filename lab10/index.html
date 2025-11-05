@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Конвертер температуры 🌡️</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #cfe6ff;
+      text-align: center;
+      padding-top: 40px;
+    }
+    .container {
+      background: #fff;
+      width: 350px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .highlight {
+      font-weight: bold;
+      color: #0066ff;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Конвертер температуры 🌡️</h1>
+
+  <div class="container">
+    
+    <label for="value">Введите значение:</label><br>
+    <input type="number" id="value" value="25" step="0.1"><br><br>
+
+    <label for="from">Из:</label><br>
+    <select id="from">
+      <option value="C">Цельсий (°C)</option>
+      <option value="F">Фаренгейт (°F)</option>
+      <option value="K">Кельвин (K)</option>
+    </select>
+
+    <div class="result" id="output"></div>
+
+  </div>
+
+<script>
+// ===== МОДУЛЬ mathUtils =====
+function toCelsius(value, from) {
+  if (from === "C") return value;
+  if (from === "F") return (value - 32) * 5/9;
+  if (from === "K") return value - 273.15;
+}
+
+function fromCelsius(celsius) {
+  return {
+    C: celsius,
+    F: (celsius * 9/5) + 32,
+    K: celsius + 273.15
+  };
+}
+
+// ===== МОДУЛЬ formatUtils =====
+function formatNumber(value) {
+  return value.toFixed(2);
+}
+
+function formatResults(values, fromUnit) {
+  const units = { C: "°C", F: "°F", K: "K" };
+  let html = "";
+  for (const [unit, val] of Object.entries(values)) {
+    if (unit !== fromUnit) {
+      html += `<p><span class="highlight">${formatNumber(val)}</span> ${units[unit]}</p>`;
+    }
+  }
+  return html;
+}
+
+// ===== ГЛАВНАЯ ЛОГИКА =====
+const input = document.getElementById('value');
+const select = document.getElementById('from');
+const output = document.getElementById('output');
+
+function update() {
+  const value = parseFloat(input.value);
+  const from = select.value;
+  const celsius = toCelsius(value, from);
+  const results = fromCelsius(celsius);
+  output.innerHTML = formatResults(results, from);
+}
+
+input.addEventListener('input', update);
+select.addEventListener('change', update);
+update();
+
+</script>
+
+</body>
+</html>
