@@ -113,4 +113,6 @@ project/
 
 📌 Скриншот работы программы
 
-![Скриншот интерфейса](2025-11-25_18-39-03.png)
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/e96d580c-2634-4b73-aead-d5cbd81dca05" />
+
+
