@@ -20,6 +20,11 @@ project/
 │── index.html        # Основной интерфейс приложения
 │── README.md         # Документация проекта
 
+📌 Скриншот работы программы
+
+<img width="1022" height="464" alt="image" src="https://github.com/user-attachments/assets/1c6bcbe4-1b37-4fbd-8340-8a639881fbfa" />
+
+
 ## 📌 Листинг кода (index.html)
 
 ```html
@@ -110,9 +115,3 @@ project/
   </script>
 </body>
 </html>
-
-📌 Скриншот работы программы
-
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/e96d580c-2634-4b73-aead-d5cbd81dca05" />
-
-
