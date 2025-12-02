@@ -108,7 +108,5 @@ Step Into
 
 Watch → добавить arr[i] и max
 
-Скриншоты
-Приложение в браузере:
-<img width="840" height="828" alt="image" src="https://github.com/user-attachments/assets/7c6aade8-70eb-48c4-bec8-d4f42e880c3b" />
-<img width="821" height="810" alt="image" src="https://github.com/user-attachments/assets/b33efbfb-ef7a-4418-a662-305e27d1b681" />
+📸 Скриншот процесса отладки:
+<img width="840" height="828" alt="image" src="https://github.com/user-attachments/assets/21af18ad-5124-4710-94d2-2d96388fcea1" />
