@@ -22,10 +22,11 @@ project/
 ---
 📸 Скриншот процесса отладки:
 <img width="840" height="828" alt="image" src="https://github.com/user-attachments/assets/21af18ad-5124-4710-94d2-2d96388fcea1" />
+<img width="821" height="810" alt="image" src="https://github.com/user-attachments/assets/f5e980b1-c8de-4f80-8f18-268712bb5b3d" />
+
 
 ## 🚀 Как запустить тесты
 
-### 1. Установить зависимости
 ```bash
 npm install
 
