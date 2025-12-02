@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Интерактивное JS приложение</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    .box {
+      background: #f3f3f3;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+    }
+    .result {
+      background: #fff;
+      border-left: 4px solid #0077ff;
+      padding: 10px;
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+    h2 {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Интерактивное приложение + DevTools</h1>
+  <p>Можно тестировать функции, вводить данные и использовать DevTools.</p>
+
+  <!-- Факториал -->
+  <div class="box">
+    <h2>Факториал</h2>
+    <input id="factInput" type="number" placeholder="Введите число">
+    <button onclick="runFactorial()">Вычислить факториал</button>
+    <div id="factResult" class="result"></div>
+  </div>
+
+  <!-- Сумма массива -->
+  <div class="box">
+    <h2>Сумма массива</h2>
+    <input id="sumInput" type="text" placeholder="Например: 1,2,3,4">
+    <button onclick="runSum()">Найти сумму</button>
+    <div id="sumResult" class="result"></div>
+  </div>
+
+  <!-- Поиск максимума (сломанная + исправленная) -->
+  <div class="box">
+    <h2>Поиск максимума (сломанная и исправленная функция)</h2>
+    <input id="maxInput" type="text" placeholder="Например: 3,10,1,7">
+    <button onclick="runBrokenMax()">Сломанная findMaxBroken()</button>
+    <button onclick="runFixedMax()">Исправленная findMax()</button>
+    <div id="maxResult" class="result"></div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // ФУНКЦИИ
+    // -----------------------------
+    function factorial(n) {
+      if (n < 0) return null;
+      let result = 1;
+      for (let i = 1; i <= n; i++) {
+        result *= i;
+      }
+      return result;
+    }
+
+    function sumArray(arr) {
+      return arr.reduce((acc, x) => acc + x, 0);
+    }
+
+    // Сломанная функция
+    function findMaxBroken(arr) {
+      let max = arr[0];
+      for (let i = 1; i < arr.length; i++) {
+
+        // ПОСТАВЬ BREAKPOINT ЗДЕСЬ
+        if (arr[i] < max) {  // <-- ошибка
+          max = arr[i];
+        }
+      }
+      return max;
+    }
+
+    // Исправленная
+    function findMax(arr) {
+      let max = arr[0];
+      for (let i = 1; i < arr.length; i++) {
+        if (arr[i] > max) {  
+          max = arr[i];
+        }
+      }
+      return max;
+    }
+
+    // -----------------------------
+    // ИНТЕРАКТИВНЫЕ ФУНКЦИИ
+    // -----------------------------
+    function runFactorial() {
+      const n = parseInt(document.getElementById("factInput").value);
+      const res = factorial(n);
+      document.getElementById("factResult").textContent =
+        "factorial(" + n + ") = " + res;
+    }
+
+    function runSum() {
+      const arr = document.getElementById("sumInput").value
+        .split(",")
+        .map(x => Number(x.trim()));
+      const res = sumArray(arr);
+      document.getElementById("sumResult").textContent =
+        "sumArray([" + arr.join(", ") + "]) = " + res;
+    }
+
+    function runBrokenMax() {
+      const arr = document.getElementById("maxInput").value
+        .split(",")
+        .map(x => Number(x.trim()));
+      const res = findMaxBroken(arr);
+      document.getElementById("maxResult").textContent =
+        "findMaxBroken([" + arr.join(", ") + "]) = " + res +
+        "\n(должно быть другое значение — поищи ошибку в DevTools)";
+    }
+
+    function runFixedMax() {
+      const arr = document.getElementById("maxInput").value
+        .split(",")
+        .map(x => Number(x.trim()));
+      const res = findMax(arr);
+      document.getElementById("maxResult").textContent =
+        "findMax([" + arr.join(", ") + "]) = " + res;
+    }
+  </script>
+
+</body>
+</html>
