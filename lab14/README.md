@@ -20,6 +20,8 @@ project/
 
 
 ---
+📸 Скриншот процесса отладки:
+<img width="840" height="828" alt="image" src="https://github.com/user-attachments/assets/21af18ad-5124-4710-94d2-2d96388fcea1" />
 
 ## 🚀 Как запустить тесты
 
@@ -107,6 +109,3 @@ Step Over
 Step Into
 
 Watch → добавить arr[i] и max
-
-📸 Скриншот процесса отладки:
-<img width="840" height="828" alt="image" src="https://github.com/user-attachments/assets/21af18ad-5124-4710-94d2-2d96388fcea1" />
