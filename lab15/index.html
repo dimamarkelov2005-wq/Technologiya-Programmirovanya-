@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management - Канбан (Рабочая версия)</title>
+    <style>
+        /* ------------------------------------- */
+        /* 1. Общие стили и Цветовая Схема (Dark Theme) */
+        /* ------------------------------------- */
+        :root {
+            --bg-color-dark: #1E1A33; /* Главный темный фон */
+            --bg-card: #2B2544; /* Фон карточек и колонок */
+            --text-light: #E0E0FF; /* Светлый текст */
+            --text-subtle: #8A859E; /* Серый текст/иконки */
+            --accent-blue: #555CE8; /* Основной акцентный синий */
+            --color-draft: #9b59b6; /* Фиолетовый (Draft) */
+            --color-progress: #f1c40f; /* Желтый (In Progress) */
+            --color-editing: #e67e22; /* Оранжевый (Editing) */
+            --color-done: #2ecc71; /* Зеленый (Done) */
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ------------------------------------- */
+        /* 2. Навигация и Шапка (Имитация) */
+        /* ------------------------------------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .header-title { font-size: 24px; font-weight: 600; color: var(--text-light); }
+        .header-menu a {
+            color: var(--text-subtle);
+            margin-left: 20px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-menu a:hover { color: var(--text-light); }
+        
+        /* ------------------------------------- */
+        /* 3. Основная Канбан-Область */
+        /* ------------------------------------- */
+        .kanban-board-container {
+            display: flex;
+            padding: 20px;
+            gap: 20px; 
+            flex-wrap: nowrap; /* Важно: чтобы колонки не переносились */
+            overflow-x: auto; /* Позволяет прокручивать доску при узком экране */
+        }
+        .kanban-column {
+            flex: 0 0 280px; /* Фиксированная ширина колонки */
+            min-width: 280px;
+            max-width: 280px;
+            padding: 10px;
+            background-color: #24203A; /* Более темный фон для области карточек */
+            border-radius: 8px;
+        }
+        .column-header {
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: var(--text-light);
+            border-bottom: 2px solid var(--text-subtle);
+        }
+        .column-draft .column-header { border-color: var(--color-draft); }
+        .column-progress .column-header { border-color: var(--color-progress); }
+        .column-editing .column-header { border-color: var(--color-editing); }
+        .column-done .column-header { border-color: var(--color-done); }
+
+        /* 4. Карточка Задачи */
+        .task-card {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid var(--accent-blue); 
+            transition: transform 0.2s;
+        }
+        .task-card:hover { transform: translateY(-3px); }
+
+        .task-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .task-meta {
+            font-size: 12px;
+            color: var(--text-subtle);
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-icons span { margin-right: 10px; }
+        
+        /* Кнопка удаления (Исправленный стиль) */
+        .delete-btn {
+            background: #e74c3c; /* Красный фон */
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 5px 8px;
+            border-radius: 4px;
+            opacity: 0.8;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .delete-btn:hover { 
+            opacity: 1; 
+            background-color: #c0392b; 
+        }
+
+        /* Стили формы добавления */
+        #add-task-form-container {
+            background-color: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px;
+        }
+        #add-task-form input, #add-task-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #3B3454;
+            border: 1px solid #50486D;
+            color: var(--text-light);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #add-task-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #add-task-form button:hover { background-color: #444AEB; }
+
+        /* Сайдбар */
+        .main-content {
+            display: flex;
+            flex-direction: row; /* Расположение доски и сайдбара */
+            padding: 0 20px 20px 20px;
+        }
+        .sidebar {
+            width: 300px;
+            min-width: 300px;
+            padding: 20px;
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            margin-left: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .kanban-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="header">
+        <div class="header-title">☰ Task Management</div>
+        <div class="header-menu">
+            <a href="#">Pricing</a>
+            <a href="#">About</a>
+            <a href="#">Language</a>
+            <a href="#">Conditions</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="kanban-area">
+            <div class="kanban-board-container">
+                <div id="draft-column" class="kanban-column column-draft" data-status="DRAFT">
+                    <div class="column-header">Draft</div>
+                </div>
+
+                <div id="progress-column" class="kanban-column column-progress" data-status="IN_PROGRESS">
+                    <div class="column-header">In Progress</div>
+                </div>
+
+                <div id="editing-column" class="kanban-column column-editing" data-status="EDITING">
+                    <div class="column-header">Editing</div>
+                </div>
+                
+                <div id="done-column" class="kanban-column column-done" data-status="DONE">
+                    <div class="column-header">Done</div>
+                </div>
+            </div>
+            
+            <div id="add-task-form-container">
+                <h2>➕ Добавить Новую Задачу</h2>
+                <form id="add-task-form">
+                    <input type="text" id="task-title" placeholder="Название задачи" required>
+                    <input type="text" id="task-description" placeholder="Краткое описание" required>
+                    <select id="task-status" required>
+                        <option value="DRAFT" selected>Draft</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="EDITING">Editing</option>
+                        <option value="DONE">Done</option>
+                    </select>
+                    <button type="submit">Добавить Задачу</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Name Surname</h2>
+                <span style="color: var(--accent-blue);">Task Author</span>
+            </div>
+            
+            <div class="sidebar-metric">
+                <h3>Completed Tasks (Mock)</h3>
+                <div style="display: flex; gap: 5px; height: 30px;">
+                    <div style="flex: 2; background-color: #555CE8; border-radius: 4px;"></div>
+                    <div style="flex: 1; background-color: #9b59b6; border-radius: 4px;"></div>
+                    <div style="flex: 1.5; background-color: #f1c40f; border-radius: 4px;"></div>
+                    <div style="flex: 0.8; background-color: #e67e22; border-radius: 4px;"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-metric">
+                <h3>Efficiency (Mock)</h3>
+                <div style="display: flex; justify-content: space-around; text-align: center; color: var(--text-light);">
+                    <div>75%<br><small style="color: var(--text-subtle);">Author A</small></div>
+                    <div>44%<br><small style="color: var(--text-subtle);">Author B</small></div>
+                    <div>68%<br><small style="color: var(--text-subtle);">Author C</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button style="position: fixed; bottom: 20px; left: 20px; padding: 10px; background-color: #2ecc71; color: white; border: none; border-radius: 5px; cursor: pointer;" onclick="window.runUnitTest()">
+        Запустить Unit-тест
+    </button>
+
+
+    <script type="module" id="data-service">
+        // Создаем глобальный объект для экспорта/импорта между модулями
+        window.App = window.App || {}; 
+        
+        const STORAGE_KEY = 'kanbanData';
+        let tasks = new Map(); 
+
+        function loadTasks() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                const arrayData = JSON.parse(data);
+                tasks = new Map(arrayData.map(item => [item.id, item]));
+            }
+        }
+
+        function saveTasks() {
+            const arrayData = Array.from(tasks.values());
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(arrayData));
+        }
+
+        function addTask(data) {
+            const id = Date.now().toString(); 
+            const newTask = {
+                id: id,
+                title: data.title,
+                description: data.description,
+                status: data.status,
+                category: 'Main Task' 
+            };
+            tasks.set(id, newTask);
+            saveTasks();
+            return newTask;
+        }
+
+        function deleteTask(id) {
+            const wasDeleted = tasks.delete(id);
+            if (wasDeleted) {
+                saveTasks();
+            }
+            return wasDeleted;
+        }
+
+        function getTasksByStatus(status) {
+            return Array.from(tasks.values()).filter(task => task.status === status);
+        }
+        
+        // Экспортируем функции в глобальный объект App
+        window.App.Data = { addTask, deleteTask, getTasksByStatus };
+        loadTasks(); // Загрузка данных при старте
+    </script>
+
+    <script type="module" id="ui-service">
+        window.App = window.App || {}; 
+
+        const COLUMNS = {
+            'DRAFT': document.getElementById('draft-column'),
+            'IN_PROGRESS': document.getElementById('progress-column'),
+            'EDITING': document.getElementById('editing-column'),
+            'DONE': document.getElementById('done-column')
+        };
+        const form = document.getElementById('add-task-form');
+
+        function getFormData() {
+            return {
+                title: document.getElementById('task-title').value.trim(),
+                description: document.getElementById('task-description').value.trim(),
+                status: document.getElementById('task-status').value
+            };
+        }
+
+        function clearForm() {
+            form.reset();
+            document.getElementById('task-status').value = "DRAFT"; // Сброс статуса по умолчанию
+        }
+
+        function createCardElement(task, onDelete) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.dataset.id = task.id;
+            
+            let borderColor = 'var(--accent-blue)'; // Default
+            if (task.status === 'DRAFT') borderColor = 'var(--color-draft)';
+            else if (task.status === 'IN_PROGRESS') borderColor = 'var(--color-progress)';
+            else if (task.status === 'EDITING') borderColor = 'var(--color-editing)';
+            else if (task.status === 'DONE') borderColor = 'var(--color-done)';
+            
+            card.style.borderLeftColor = borderColor;
+
+            card.innerHTML = `
+                <div class="task-title">${task.title}</div>
+                <div style="font-size: 13px; color: var(--text-light); opacity: 0.8; margin-bottom: 8px;">${task.description}</div>
+                <div class="task-meta">
+                    <div class="task-icons">
+                        <span title="Comments">💬</span>
+                        <span title="Priority">⭐</span>
+                    </div>
+                    <button class="delete-btn" data-id="${task.id}">🗑 Удалить</button>
+                </div>
+            `;
+
+            const deleteButton = card.querySelector('.delete-btn');
+            deleteButton.addEventListener('click', () => onDelete(task.id));
+            return card;
+        }
+
+        function renderBoard(tasksByStatus, onDelete) {
+            // Очистка всех колонок
+            Object.values(COLUMNS).forEach(col => {
+                const header = col.querySelector('.column-header');
+                // Удаляем все, кроме заголовка
+                while (col.lastChild !== header) { 
+                    col.removeChild(col.lastChild);
+                }
+            });
+
+            // Рендеринг задач
+            for (const status in tasksByStatus) {
+                const tasks = tasksByStatus[status];
+                const column = COLUMNS[status];
+                
+                tasks.forEach(task => {
+                    const cardElement = createCardElement(task, onDelete);
+                    column.appendChild(cardElement);
+                });
+            }
+        }
+
+        function onFormSubmit(handler) {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                handler();
+            });
+        }
+        
+        window.App.UI = { getFormData, clearForm, renderBoard, onFormSubmit };
+    </script>
+    
+    <script type="module" id="main-controller">
+        // Импорт через глобальный объект App
+        const Data = window.App.Data;
+        const UI = window.App.UI;
+
+        function refreshBoard() {
+            // [Breakpoint 1: Обновление доски]
+            const tasksByStatus = {
+                'DRAFT': Data.getTasksByStatus('DRAFT'),
+                'IN_PROGRESS': Data.getTasksByStatus('IN_PROGRESS'),
+                'EDITING': Data.getTasksByStatus('EDITING'),
+                'DONE': Data.getTasksByStatus('DONE')
+            };
+            UI.renderBoard(tasksByStatus, handleDelete);
+        }
+
+        function handleAdd() {
+            const data = UI.getFormData();
+            
+            if (!data.title || !data.description || !data.status) {
+                alert('Заполните все поля!');
+                return;
+            }
+
+            // [Breakpoint 2: Добавление задачи]
+            Data.addTask(data);
+            UI.clearForm();
+            refreshBoard();
+        }
+
+        function handleDelete(id) {
+            if (confirm('Удалить эту задачу?')) {
+                Data.deleteTask(id);
+                refreshBoard();
+            }
+        }
+
+        function init() {
+            UI.onFormSubmit(handleAdd);
+            refreshBoard();
+            console.log("Канбан-доска 'Task Management' запущена.");
+        }
+
+        init();
+    </script>
+    
+    <script>
+        // Код Unit-теста без изменений, но вызван через window.runUnitTest()
+        function runUnitTest() {
+            console.log('--- Запуск Unit-теста (Data Service) ---');
+            
+            // Имитация сохранения
+            let testMap = new Map();
+            const STORAGE_KEY = 'kanbanDataTest';
+
+            function saveTestTasks() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(testMap.values())));
+            }
+
+            function addTestTask(data) {
+                const id = 'test' + Date.now();
+                const newTask = { ...data, id: id, status: data.status };
+                testMap.set(id, newTask);
+                saveTestTasks();
+                return id;
+            }
+
+            // --- Тест 1: Добавление задачи ---
+            const initialSize = testMap.size;
+            const testData = { title: "Test Task", description: "Unit test description", status: "DRAFT" };
+            const addedId = addTestTask(testData);
+
+            console.assert(
+                testMap.size === initialSize + 1,
+                'Test 1 Failed (Add): Размер Map не увеличился.'
+            );
+            console.log(`Test 1 (Add Task): ${testMap.size === initialSize + 1 ? 'УСПЕШНО' : 'ОШИБКА'}`);
+
+            // --- Тест 2: Проверка данных в LocalStorage ---
+            const storedData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            console.assert(
+                storedData.some(t => t.id === addedId),
+                'Test 2 Failed (LocalStorage): Добавленный элемент не найден в хранилище.'
+            );
+            console.log(`Test 2 (LocalStorage Check): ${storedData.some(t => t.id === addedId) ? 'УСПЕШНО' : 'ОШИБКА'}`);
+            
+            console.log('--- Unit-тест завершен. Проверьте сообщения выше. ---');
+            localStorage.removeItem(STORAGE_KEY); 
+        }
+
+        window.runUnitTest = runUnitTest; 
+    </script>
+</body>
+</html>
